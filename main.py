@@ -5,7 +5,7 @@ from PyQt6.QtGui import QPixmap
 import sys
 from PyQt6.QtWidgets import QFileDialog, QPushButton, QTextEdit, QHBoxLayout
 import os
-
+# DOMAINS HERE
 # Load the .env file manually
 from pathlib import Path
 env_path = Path('.env')
@@ -21,7 +21,6 @@ STATIC_HEADERS = [
     "city", "district", "country_name", "connection_type", "zipcode", "longitude", 
     "latitude", "country_tld", "languages", "time_zone", "calling_code"
 ]
-
 class IPTable(QMainWindow):
     def __init__(self):
         super().__init__()
