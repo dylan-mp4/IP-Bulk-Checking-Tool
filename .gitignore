@@ -2,3 +2,6 @@
 output.csv
 ips.csv
 __pycache__/*
+/__pycache__
+.venv/*
+/.venv
