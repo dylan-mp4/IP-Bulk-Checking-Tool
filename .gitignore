@@ -1,5 +1,4 @@
 .env
 output.csv
 ips.csv
-__pycache__/DomainChecker.cpython-312.pyc
-__pycache__/IPChecker.cpython-312.pyc
+__pycache__/*
