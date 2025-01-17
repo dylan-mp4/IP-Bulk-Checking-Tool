@@ -1,5 +1,7 @@
 import requests
-from PyQt6.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QLabel, QFileDialog, QPushButton, QTextEdit, QHBoxLayout, QTabWidget
+import asyncio
+import aiohttp
+from PyQt6.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QLabel, QFileDialog, QPushButton, QTextEdit, QHBoxLayout, QTabWidget, QApplication
 from pathlib import Path
 import csv
 
@@ -57,12 +59,18 @@ class DomainChecker(QMainWindow):
         self.pasteButton.clicked.connect(self.paste_domains)
         self.exportButton = QPushButton("Export CSV")
         self.exportButton.clicked.connect(self.export_csv)
+        self.copyRowButton = QPushButton("Copy Selected Row")
+        self.copyRowButton.clicked.connect(self.copy_selected_row)
+        self.copyColumnButton = QPushButton("Copy Selected Column")
+        self.copyColumnButton.clicked.connect(self.copy_selected_column)
         self.textEdit = QTextEdit()
         
         buttonLayout = QHBoxLayout()
         buttonLayout.addWidget(self.importButton)
         buttonLayout.addWidget(self.pasteButton)
         buttonLayout.addWidget(self.exportButton)
+        buttonLayout.addWidget(self.copyRowButton)
+        buttonLayout.addWidget(self.copyColumnButton)
         
         layout.addLayout(buttonLayout)
         layout.addWidget(self.textEdit)
@@ -84,14 +92,17 @@ class DomainChecker(QMainWindow):
         domains = [domain.strip() for domain in domain_text.split('\n') if domain.strip()]
         self.fetch_and_display_data(domains)
 
-    def fetch_and_display_data(self, domains):
-        self.data = []
-        for domain in domains:
-            url = f"https://api.apilayer.com/whois/query?domain={domain}"
-            headers = {"apikey": DOMAIN_API_KEY}
-            response = requests.get(url, headers=headers)
-            data = response.json().get("result", {})
-            self.data.append(data)
+    async def fetch_domain_info(self, session, domain):
+        url = f"https://api.apilayer.com/whois/query?domain={domain}"
+        headers = {"apikey": DOMAIN_API_KEY}
+        async with session.get(url, headers=headers) as response:
+            return await response.json()
+
+    async def fetch_and_display_data_async(self, domains):
+        async with aiohttp.ClientSession() as session:
+            tasks = [self.fetch_domain_info(session, domain) for domain in domains]
+            results = await asyncio.gather(*tasks)
+            self.data = [result.get("result", {}) for result in results if isinstance(result.get("result", {}), dict)]
         
         self.tableWidget.setRowCount(len(self.data))
         self.tableWidget.setColumnCount(len(self.headers))
@@ -100,6 +111,10 @@ class DomainChecker(QMainWindow):
         for row_idx, row_data in enumerate(self.data):
             for col_idx, header in enumerate(self.headers):
                 self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(row_data.get(header, ""))))
+
+    def fetch_and_display_data(self, domains):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.fetch_and_display_data_async(domains))
 
     def export_csv(self):
         file_dialog = QFileDialog()
@@ -110,3 +125,17 @@ class DomainChecker(QMainWindow):
                 writer.writerow(self.headers)
                 for row_data in self.data:
                     writer.writerow([row_data.get(header, "") for header in self.headers])
+
+    def copy_selected_row(self):
+        selected_row = self.tableWidget.currentRow()
+        if selected_row >= 0:
+            row_data = [self.tableWidget.item(selected_row, col).text() for col in range(self.tableWidget.columnCount())]
+            clipboard = QApplication.clipboard()
+            clipboard.setText("\t".join(row_data))
+
+    def copy_selected_column(self):
+        selected_column = self.tableWidget.currentColumn()
+        if selected_column >= 0:
+            column_data = [self.tableWidget.item(row, selected_column).text() for row in range(self.tableWidget.rowCount())]
+            clipboard = QApplication.clipboard()
+            clipboard.setText("\n".join(column_data))
