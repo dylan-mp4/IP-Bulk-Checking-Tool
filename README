@@ -23,6 +23,16 @@ The Bulk Checking Tool is a utility designed to check the status of multiple typ
     pip install -r requirements.txt
     ```
 
+## Usage
+### IP Checking Tool
+1. Create an account with https://ipgeolocation.io and get your API Key
+2. Input API key into the .env file (sample provided just rename)
+3. Run the tool
+    ```
+    python main.py
+    ```
+4. Import a csv or raw paste IPs and press submit :)
+
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
 
