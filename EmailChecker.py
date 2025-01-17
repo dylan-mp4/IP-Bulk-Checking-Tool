@@ -19,13 +19,16 @@ class EmailChecker(QMainWindow):
         # Add buttons and text area for input
         self.importButton = QPushButton("Import CSV")
         self.importButton.clicked.connect(self.import_csv)
-        self.pasteButton = QPushButton("Paste Emails")
+        self.pasteButton = QPushButton("Submit Emails")
         self.pasteButton.clicked.connect(self.paste_emails)
+        self.exportButton = QPushButton("Export CSV")
+        self.exportButton.clicked.connect(self.export_csv)
         self.textEdit = QTextEdit()
         
         buttonLayout = QHBoxLayout()
         buttonLayout.addWidget(self.importButton)
         buttonLayout.addWidget(self.pasteButton)
+        buttonLayout.addWidget(self.exportButton)
         
         layout.addLayout(buttonLayout)
         layout.addWidget(self.textEdit)
@@ -79,3 +82,13 @@ class EmailChecker(QMainWindow):
             self.tableWidget.setItem(row_idx, 0, QTableWidgetItem(row_data.get("email", "")))
             self.tableWidget.setItem(row_idx, 1, QTableWidgetItem(row_data.get("domain", "")))
             self.tableWidget.setItem(row_idx, 2, QTableWidgetItem(row_data.get("location", row_data.get("error", ""))))
+
+    def export_csv(self):
+        file_dialog = QFileDialog()
+        file_path, _ = file_dialog.getSaveFileName(self, "Save CSV", "", "CSV Files (*.csv)")
+        if file_path:
+            with open(file_path, mode='w', newline='', encoding='utf-8') as csv_file:
+                writer = csv.writer(csv_file)
+                writer.writerow(["Email", "Domain", "Location"])
+                for row_data in self.data:
+                    writer.writerow([row_data.get("email", ""), row_data.get("domain", ""), row_data.get("location", row_data.get("error", ""))])

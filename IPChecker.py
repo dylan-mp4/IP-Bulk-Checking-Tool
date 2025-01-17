@@ -12,11 +12,11 @@ env_path = Path('.env')
 if env_path.exists():
     with open(env_path) as f:
         for line in f:
-            if line.startswith("API_KEY"):
+            if line.startswith("IP_API_KEY"):
                 try:
-                    API_KEY = line.strip().split('=')[1]
+                    IP_API_KEY = line.strip().split('=')[1]
                 except IndexError:
-                    raise ValueError("API_KEY is missing in the .env file")
+                    raise ValueError("IP_API_KEY is missing in the .env file")
 
 # Define the static column order
 STATIC_HEADERS = [
@@ -61,13 +61,16 @@ class IPChecker(QMainWindow):
         # Add buttons and text area for input
         self.importButton = QPushButton("Import CSV")
         self.importButton.clicked.connect(self.import_csv)
-        self.pasteButton = QPushButton("Paste IPs")
+        self.pasteButton = QPushButton("Submit IPs")
         self.pasteButton.clicked.connect(self.paste_ips)
+        self.exportButton = QPushButton("Export CSV")
+        self.exportButton.clicked.connect(self.export_csv)
         self.textEdit = QTextEdit()
         
         buttonLayout = QHBoxLayout()
         buttonLayout.addWidget(self.importButton)
         buttonLayout.addWidget(self.pasteButton)
+        buttonLayout.addWidget(self.exportButton)
         
         layout.addLayout(buttonLayout)
         layout.addWidget(self.textEdit)
@@ -98,7 +101,7 @@ class IPChecker(QMainWindow):
     def fetch_and_display_data(self, ips):
         self.data = []
         for ip in ips:
-            url = "https://api.ipgeolocation.io/ipgeo?apiKey=" + API_KEY + "&ip=" + ip
+            url = "https://api.ipgeolocation.io/ipgeo?apiKey=" + IP_API_KEY + "&ip=" + ip
             response = requests.get(url)
             data = response.json()
             self.data.append(data)
@@ -131,3 +134,13 @@ class IPChecker(QMainWindow):
         data = io.BytesIO()
         map_.save(data, close_file=False)
         self.mapView.setHtml(data.getvalue().decode())
+
+    def export_csv(self):
+        file_dialog = QFileDialog()
+        file_path, _ = file_dialog.getSaveFileName(self, "Save CSV", "", "CSV Files (*.csv)")
+        if file_path:
+            with open(file_path, mode='w', newline='', encoding='utf-8') as csv_file:
+                writer = csv.writer(csv_file)
+                writer.writerow(self.headers)
+                for row_data in self.data:
+                    writer.writerow([row_data.get(header, "") for header in self.headers])
