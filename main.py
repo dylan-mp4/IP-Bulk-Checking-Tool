@@ -23,6 +23,7 @@ class MainWindow(QMainWindow):
         
         layout.addWidget(self.ipCheckerButton)
         layout.addWidget(self.domainCheckerButton)
+        layout.addWidget(self.EmailCheckerButton)
         
         container = QWidget()
         container.setLayout(layout)
@@ -34,6 +35,10 @@ class MainWindow(QMainWindow):
 
     def open_domain_checker(self):
         self.domain_checker = DomainChecker()
+        self.domain_checker.show()
+
+    def open_email_checker(self):
+        self.domain_checker = EmailChecker()
         self.domain_checker.show()
 
 def main():
