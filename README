@@ -1,0 +1,30 @@
+# Bulk Checking Tool
+
+## Overview
+The Bulk Checking Tool is a utility designed to check the status of multiple types of data efficiently.
+
+## Features
+- Bulk IP address checking
+    - Using CSV format or Raw paste data
+- Bulk Domain Checking
+- Detailed status reports
+
+## Installation
+1. Clone the repository:
+    ```
+    git clone https://github.com/yourusername/IP-Bulk-Checking-Tool.git
+    ```
+2. Navigate to the project directory:
+    ```
+    cd IP-Bulk-Checking-Tool
+    ```
+3. Install the required dependencies:
+    ```
+    pip install -r requirements.txt
+    ```
+
+## Contributing
+Contributions are welcome! Please fork the repository and submit a pull request.
+
+## License
+This project is licensed under the MIT License.
