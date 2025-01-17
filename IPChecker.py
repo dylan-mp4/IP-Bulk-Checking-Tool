@@ -1,8 +1,11 @@
 import csv
 import requests
-from PyQt6.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QLabel, QFileDialog, QPushButton, QTextEdit, QHBoxLayout
+from PyQt6.QtWidgets import QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QLabel, QFileDialog, QPushButton, QTextEdit, QHBoxLayout, QTabWidget
 from PyQt6.QtGui import QPixmap
+from PyQt6.QtWebEngineWidgets import QWebEngineView
 from pathlib import Path
+import folium
+import io
 
 # Load the .env file manually
 env_path = Path('.env')
@@ -32,6 +35,25 @@ class IPChecker(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        self.tabs = QTabWidget()
+        
+        self.tableTab = QWidget()
+        self.mapTab = QWidget()
+        
+        self.tabs.addTab(self.tableTab, "Table View")
+        self.tabs.addTab(self.mapTab, "Map View")
+        
+        self.initTableTab()
+        self.initMapTab()
+        
+        layout = QVBoxLayout()
+        layout.addWidget(self.tabs)
+        
+        container = QWidget()
+        container.setLayout(layout)
+        self.setCentralWidget(container)
+
+    def initTableTab(self):
         self.tableWidget = QTableWidget()
         self.tableWidget.setSortingEnabled(True)
         layout = QVBoxLayout()
@@ -51,9 +73,13 @@ class IPChecker(QMainWindow):
         layout.addWidget(self.textEdit)
         layout.addWidget(self.tableWidget)
         
-        container = QWidget()
-        container.setLayout(layout)
-        self.setCentralWidget(container)
+        self.tableTab.setLayout(layout)
+
+    def initMapTab(self):
+        layout = QVBoxLayout()
+        self.mapView = QWebEngineView()
+        layout.addWidget(self.mapView)
+        self.mapTab.setLayout(layout)
 
     def import_csv(self):
         file_dialog = QFileDialog()
@@ -91,3 +117,17 @@ class IPChecker(QMainWindow):
                     self.tableWidget.setCellWidget(row_idx, col_idx, label)
                 else:
                     self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(row_data.get(header, ""))))
+        
+        self.update_map_view()
+
+    def update_map_view(self):
+        map_ = folium.Map(location=[0, 0], zoom_start=2)
+        for row_data in self.data:
+            latitude = row_data.get("latitude")
+            longitude = row_data.get("longitude")
+            if latitude and longitude:
+                folium.Marker([latitude, longitude], popup=row_data.get("ip")).add_to(map_)
+        
+        data = io.BytesIO()
+        map_.save(data, close_file=False)
+        self.mapView.setHtml(data.getvalue().decode())
