@@ -4,6 +4,7 @@ import tldextract
 import tkinter as tk
 from tkinter import messagebox, filedialog
 import csv
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QLabel
 
 class EmailChecker:
     def __init__(self, api_key):
