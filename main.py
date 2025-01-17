@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         self.domainCheckerButton = QPushButton("Domain Checker")
         self.domainCheckerButton.clicked.connect(self.open_domain_checker)
         self.EmailCheckerButton = QPushButton("Email Checker")
-        self.EmailCheckerButton.clicked.connect(self.open_)
+        self.EmailCheckerButton.clicked.connect(self.open_email_checker)
         
         layout.addWidget(self.ipCheckerButton)
         layout.addWidget(self.domainCheckerButton)
