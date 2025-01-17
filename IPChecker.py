@@ -10,7 +10,10 @@ if env_path.exists():
     with open(env_path) as f:
         for line in f:
             if line.startswith("API_KEY"):
-                API_KEY = line.strip().split('=')[1]
+                try:
+                    API_KEY = line.strip().split('=')[1]
+                except IndexError:
+                    raise ValueError("API_KEY is missing in the .env file")
 
 # Define the static column order
 STATIC_HEADERS = [
