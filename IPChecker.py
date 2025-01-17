@@ -21,7 +21,7 @@ if env_path.exists():
 # Define the static column order
 STATIC_HEADERS = [
     "country_flag", "ip", "organization", "isp", "country_name_official", "country_capital", 
-    "city", "district", "country_name", "connection_type", "zipcode", "longitude", 
+    "city", "country_name", "zipcode", "longitude", 
     "latitude", "country_tld", "languages", "time_zone", "calling_code"
 ]
 
