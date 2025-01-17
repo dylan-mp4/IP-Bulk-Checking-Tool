@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QPu
 import sys
 from IPChecker import IPChecker
 from DomainChecker import DomainChecker
+from EmailChecker import EmailChecker
 # 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -17,6 +18,8 @@ class MainWindow(QMainWindow):
         self.ipCheckerButton.clicked.connect(self.open_ip_checker)
         self.domainCheckerButton = QPushButton("Domain Checker")
         self.domainCheckerButton.clicked.connect(self.open_domain_checker)
+        self.EmailCheckerButton = QPushButton("Email Checker")
+        self.EmailCheckerButton.clicked.connect(self.open_email_checker)
         
         layout.addWidget(self.ipCheckerButton)
         layout.addWidget(self.domainCheckerButton)
