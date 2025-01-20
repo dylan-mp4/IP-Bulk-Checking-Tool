@@ -2,7 +2,7 @@ import re
 import requests
 import tldextract
 import csv
-from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QLabel, QFileDialog, QPushButton, QTextEdit, QHBoxLayout, QTableWidget, QTableWidgetItem
+from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QLabel, QFileDialog, QPushButton, QTextEdit, QHBoxLayout, QTableWidget, QTableWidgetItem, QApplication
 
 class EmailChecker(QMainWindow):
     def __init__(self):
@@ -23,12 +23,18 @@ class EmailChecker(QMainWindow):
         self.pasteButton.clicked.connect(self.paste_emails)
         self.exportButton = QPushButton("Export CSV")
         self.exportButton.clicked.connect(self.export_csv)
+        self.copyRowButton = QPushButton("Copy Selected Row")
+        self.copyRowButton.clicked.connect(self.copy_selected_row)
+        self.copyColumnButton = QPushButton("Copy Selected Column")
+        self.copyColumnButton.clicked.connect(self.copy_selected_column)
         self.textEdit = QTextEdit()
         
         buttonLayout = QHBoxLayout()
         buttonLayout.addWidget(self.importButton)
         buttonLayout.addWidget(self.pasteButton)
         buttonLayout.addWidget(self.exportButton)
+        buttonLayout.addWidget(self.copyRowButton)
+        buttonLayout.addWidget(self.copyColumnButton)
         
         layout.addLayout(buttonLayout)
         layout.addWidget(self.textEdit)
@@ -92,3 +98,17 @@ class EmailChecker(QMainWindow):
                 writer.writerow(["Email", "Domain", "Location"])
                 for row_data in self.data:
                     writer.writerow([row_data.get("email", ""), row_data.get("domain", ""), row_data.get("location", row_data.get("error", ""))])
+
+    def copy_selected_row(self):
+        selected_row = self.tableWidget.currentRow()
+        if selected_row >= 0:
+            row_data = [self.tableWidget.item(selected_row, col).text() for col in range(self.tableWidget.columnCount())]
+            clipboard = QApplication.clipboard()
+            clipboard.setText("\t".join(row_data))
+
+    def copy_selected_column(self):
+        selected_column = self.tableWidget.currentColumn()
+        if selected_column >= 0:
+            column_data = [self.tableWidget.item(row, selected_column).text() for row in range(self.tableWidget.rowCount())]
+            clipboard = QApplication.clipboard()
+            clipboard.setText("\n".join(column_data))
