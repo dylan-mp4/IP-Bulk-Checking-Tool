@@ -31,7 +31,7 @@ The Bulk Checking Tool is a utility designed to check the status of multiple typ
     ```
     python main.py
     ```
-4. Import a csv or raw paste IPs and press submit :)
+4. Import a csv or raw paste IPs and press submit
 
 ## APIs
 https://apilayer.com/marketplace/whois-api
