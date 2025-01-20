@@ -33,6 +33,11 @@ The Bulk Checking Tool is a utility designed to check the status of multiple typ
     ```
 4. Import a csv or raw paste IPs and press submit :)
 
+## APIs
+https://apilayer.com/marketplace/whois-api
+https://www.abuseipdb.com/pricing
+https://ipgeolocation.io
+
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
 
