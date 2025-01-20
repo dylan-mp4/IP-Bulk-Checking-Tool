@@ -5,5 +5,5 @@ __pycache__/*
 /__pycache__
 .venv/*
 /.venv
-__pycache__/EmailChecker.cpython-312.pyc
+./__pycache__/*
 .vscode/*
